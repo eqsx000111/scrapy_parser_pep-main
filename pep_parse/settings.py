@@ -1,19 +1,24 @@
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
-RESULTS_DIR = PROJECT_ROOT / 'results'
-
+RESULTS_DIR_NAME = 'results'
+FEEDS_FILENAME = f'{RESULTS_DIR_NAME}/pep_%(time)s.csv'
+FORMAT = 'csv'
+SPIDERS_MODULE = 'pep_parse.spiders'
+RESULTS_DIR = PROJECT_ROOT / RESULTS_DIR_NAME
+ALLOWED_DOMAINS = ['peps.python.org']
+PEP_SPIDER_NAME = 'pep'
 BOT_NAME = 'pep_parse'
 
-SPIDER_MODULES = ['pep_parse.spiders']
-NEWSPIDER_MODULE = 'pep_parse.spiders'
+SPIDER_MODULES = [SPIDERS_MODULE]
+NEWSPIDER_MODULE = SPIDERS_MODULE
 
 ROBOTSTXT_OBEY = True
 
-FEED_EXPORT_ENCODING = "utf-8"
+FEED_EXPORT_ENCODING = 'utf-8'
 FEEDS = {
-    'results/pep_%(time)s.csv': {
-        'format': 'csv',
+    FEEDS_FILENAME: {
+        'format': FORMAT,
         'overwrite': True,
         'fields': ['number', 'name', 'status'],
     }

@@ -1,21 +1,25 @@
 import scrapy
 
-from constants import ALLOWED_DOMAINS, PEP_SPIDER_NAME, START_URLS
 from pep_parse.items import PepParseItem
+from pep_parse.settings import PEP_SPIDER_NAME, ALLOWED_DOMAINS
+URLS = 'https://{domain}/'
 
 
 class PepSpider(scrapy.Spider):
     name = PEP_SPIDER_NAME
     allowed_domains = ALLOWED_DOMAINS
-    start_urls = START_URLS
+    start_urls = [URLS.format(domain=domain) for domain in allowed_domains]
 
     def parse_pep(self, response):
         for link in response.css('td a[href*="pep-"]::attr(href)').getall():
             yield response.follow(link, callback=self.parse_detail)
 
     def parse_detail(self, response):
+        number, name = response.css(
+            'h1.page-title::text'
+        ).get().split(' – ', maxsplit=1)
         yield PepParseItem(
-            number=response.css('h1.page-title::text').get().split(' – ')[0],
-            name=response.css('h1.page-title::text').get().split(' – ')[1],
+            number=number,
+            name=name,
             status=response.css('abbr::text').get()
         )

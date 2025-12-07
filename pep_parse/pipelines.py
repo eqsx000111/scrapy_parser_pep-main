@@ -1,35 +1,33 @@
 import csv
 from collections import defaultdict
+from datetime import datetime
 
-from itemadapter import ItemAdapter
-
-from constants import TIMESTAMP
 from pep_parse import settings
 
 
 class PepParsePipeline:
+    @classmethod
+    def from_crawler(cls, crawler):
+        settings.RESULTS_DIR.mkdir(exist_ok=True)
+        return cls()
+
     def open_spider(self, spider):
         self.status_counts = defaultdict(int)
-        self.total = 0
-        settings.RESULTS_DIR.mkdir(exist_ok=True)
 
     def process_item(self, item, spider):
-        adapter = ItemAdapter(item)
-        status = adapter.get('status') or ''
-        status = status.strip()
-        self.status_counts[status] += 1
-        self.total += 1
+        self.status_counts[item['status'].strip()] += 1
         return item
 
     def close_spider(self, spider):
+        timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
         with open(
-            settings.RESULTS_DIR / f'status_summary_{TIMESTAMP}.csv',
+            settings.RESULTS_DIR / f'status_summary_{timestamp}.csv',
             mode='w',
             encoding='utf-8',
             newline=''
         ) as f:
             writer = csv.writer(f)
-            writer.writerow(['Статус', 'Количество'])
+            writer.writerow(['Статус', 'Количество'],)
             for status, count in sorted(self.status_counts.items()):
                 writer.writerow([status, count])
-            writer.writerow(['Итого', self.total])
+            writer.writerow(['Итого', sum(self.status_counts.values())])
