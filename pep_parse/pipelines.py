@@ -6,16 +6,15 @@ from pep_parse import settings
 
 
 class PepParsePipeline:
-    @classmethod
-    def from_crawler(cls, crawler):
+
+    def __init__(self):
         settings.RESULTS_DIR.mkdir(exist_ok=True)
-        return cls()
 
     def open_spider(self, spider):
         self.status_counts = defaultdict(int)
 
     def process_item(self, item, spider):
-        self.status_counts[item['status'].strip()] += 1
+        self.status_counts[item['status']] += 1
         return item
 
     def close_spider(self, spider):
@@ -26,8 +25,9 @@ class PepParsePipeline:
             encoding='utf-8',
             newline=''
         ) as f:
-            writer = csv.writer(f)
-            writer.writerow(['Статус', 'Количество'],)
-            for status, count in sorted(self.status_counts.items()):
-                writer.writerow([status, count])
-            writer.writerow(['Итого', sum(self.status_counts.values())])
+            writer = csv.writer(f, dialect=csv.excel)
+            writer.writerows([
+                ['Статус', 'Количество'],
+                *sorted(self.status_counts.items()),
+                ['Итого', sum(self.status_counts.values())]
+            ])

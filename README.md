@@ -43,6 +43,74 @@
 
 ---
 
+## Как запустить проект 
+
+### 1. Клонировать репозиторий 
+
+ 
+
+```bash 
+
+git clone https://github.com/eqsx000111/scrapy_parser_pep-main.git 
+
+cd scrapy_parser_pep-main
+
+``` 
+
+ 
+
+### 2. Создать и активировать виртуальное окружение 
+
+ 
+
+```bash 
+
+python3 -m venv venv 
+
+``` 
+
+ 
+
+Для Linux/macOS: 
+
+ 
+
+```bash 
+
+source venv/bin/activate 
+
+``` 
+
+ 
+
+Для Windows: 
+
+ 
+
+```bash 
+
+venv\Scripts\activate 
+
+``` 
+
+ 
+
+### 3. Установить зависимости 
+
+ 
+
+```bash 
+
+python3 -m pip install --upgrade pip 
+
+pip install -r requirements.txt 
+
+``` 
+### 4. Запуск парсера 
+```bash
+scrapy crawl pep
+```
+
 ## Структура проекта
 ```
 scrapy_parser_pep/
